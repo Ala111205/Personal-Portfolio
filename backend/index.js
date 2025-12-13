@@ -3,11 +3,17 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+const sendNewMessageEmail = require("./utils/sendEmail");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ===== Middleware =====
-app.use(cors());
+app.use(cors({
+  origin: ["https://personal-portfolio-one-eta-48.vercel.app"],
+  methods: ["POST", "GET"]
+}));
+
 app.use(express.json());
 
 // ===== MongoDB Connection =====
@@ -53,9 +59,14 @@ app.post("/contact", async (req, res) => {
       message
     });
 
+    // SEND EMAIL (do NOT block response)
+    sendNewMessageEmail({ name, email, subject, message })
+    .then(() => console.log("📧 Email sent"))
+    .catch(err => console.error("❌ Email error:", err.message));
+
     return res.status(201).json({
       success: true,
-      msg: "Message stored in MongoDB",
+      msg: "Message stored & email sent",
       data: newMessage
     });
 
