@@ -1,6 +1,6 @@
 **💻 Personal Portfolio Website (Web App)**
 
-      A modern, responsive portfolio website showcasing projects, skills, and contact form integration. Built with plain JavaScript, HTML, and CSS for the frontend, and Node.js + Express       + MongoDB for backend contact form storage with email notifications.
+      A modern, responsive portfolio website showcasing projects, skills, and contact form integration. Built with plain JavaScript, HTML, and CSS for the frontend, and Node.js + Express + MongoDB for backend contact form storage with email notifications.
 
 **Live Demo 👉** https://personal-portfolio-one-eta-48.vercel.app/
 
