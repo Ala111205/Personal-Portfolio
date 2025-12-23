@@ -17,12 +17,44 @@ app.use(cors({
 app.use(express.json());
 
 // ===== MongoDB Connection =====
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected..."))
-  .catch(err => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  });
+let isConnecting = false;
+let retryDelay = 5000;       // start with 5s
+const MAX_RETRY_DELAY = 60000; // cap at 60s
+
+const connectDB = async () => {
+  if (isConnecting) return;
+
+  isConnecting = true;
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    });
+
+    console.log("✅ MongoDB connected");
+    retryDelay = 5000; // reset delay after success
+  } catch (err) {
+    console.error("❌ MongoDB connection failed:", err.message);
+
+    setTimeout(connectDB, retryDelay);
+    retryDelay = Math.min(retryDelay * 2, MAX_RETRY_DELAY);
+  } finally {
+    isConnecting = false;
+  }
+};
+
+// Fired AFTER a successful connection drops
+mongoose.connection.on("disconnected", () => {
+  console.warn("⚠️ MongoDB disconnected. Attempting reconnect...");
+  connectDB();
+});
+
+mongoose.connection.on("error", err => {
+  console.error("MongoDB runtime error:", err.message);
+});
+
+connectDB();
 
 // ===== Mongoose Schema =====
 const messageSchema = new mongoose.Schema({
