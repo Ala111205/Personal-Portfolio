@@ -8,10 +8,24 @@ const sendNewMessageEmail = require("./utils/sendEmail");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ===== Middleware =====
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "https://personal-portfolio-one-eta-48.vercel.app"
+];
+
 app.use(cors({
-  origin: ["https://personal-portfolio-one-eta-48.vercel.app"],
-  methods: ["POST", "GET"]
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
 }));
 
 app.use(express.json());
