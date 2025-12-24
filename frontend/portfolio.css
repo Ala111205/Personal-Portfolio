@@ -319,6 +319,7 @@ section {
     border-radius: 12px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.04);
+    font-size: 15px;
     transition: transform .18s ease, box-shadow .18s ease;
 }
 .project-card:hover { 
